@@ -1,27 +1,29 @@
 package ca.sheridancollege.chyoonho.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
-import ca.sheridancollege.chyoonho.messages.Greeting;
-import ca.sheridancollege.chyoonho.messages.HelloMessage;
+import ca.sheridancollege.chyoonho.messages.UsernameOut;
+import ca.sheridancollege.chyoonho.messages.UsernameMessage;
 
 @Controller
 public class GreetingController {
 
-	// /ws/hello
-	// 
+	//receives JSON from client, sent to /app/hello
 	@MessageMapping("/hello")
-	@SendTo("/topic/greetings")
-	public Greeting greet(HelloMessage hellomsg)  throws Exception {
+	//responds by sending new Greeting to /topic/greetings
+	@SendToUser("/topic/greetings")
+	public UsernameOut greet(@Payload UsernameMessage hellomsg)  throws Exception {
 		
 		Thread.sleep(1000);
 		
-		System.out.println("_______________________" + hellomsg);
-		return new Greeting("Hello, " + HtmlUtils.htmlEscape(hellomsg.getMessage()));
+		System.out.println("Payload HelloMessage: " + hellomsg.getName());
+		return new UsernameOut("Connected To the Server As: " + hellomsg.getName());
 	}
-	
 	
 }
